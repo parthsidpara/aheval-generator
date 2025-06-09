@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>શ્રી થોરડી પ્રાથમિક શાળા - અહેવાલ જનરેટર</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Noto Sans Gujarati', sans-serif;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Add styles for proper paragraph spacing */
+        #ahevalContent {
+            line-height: 1.8;
+        }
+        #ahevalContent p {
+            margin-bottom: 1.5em;
+        }
+        #ahevalContent h1, 
+        #ahevalContent h2, 
+        #ahevalContent h3 {
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+            font-weight: 600;
+        }
+        #ahevalContent h1 {
+            font-size: 1.8em;
+        }
+        #ahevalContent h2 {
+            font-size: 1.5em;
+        }
+        #ahevalContent h3 {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">શ્રી થોરડી પ્રાથમિક શાળા - અહેવાલ જનરેટર</h1>
+            
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <form id="ahevalForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">કાર્યક્રમનું નામ</label>
+                            <input type="text" id="eventName" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="દા.ત. - શાળા ઉદ્ઘાટન, સ્વાતંત્ર્ય દિન સમારોહ, વગેરે">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">તારીખ અને સમય</label>
+                            <input type="datetime-local" id="dateTime" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">શિક્ષકોની સંખ્યા</label>
+                            <input type="number" id="teachers" required min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">છોકરાઓની સંખ્યા</label>
+                            <input type="number" id="boys" required min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">છોકરીઓની સંખ્યા</label>
+                            <input type="number" id="girls" required min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">શાળા સંચાલન સમિતિના સભ્યોની સંખ્યા</label>
+                            <input type="number" id="smc" required min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ગામડાના લોકોની સંખ્યા</label>
+                            <input type="number" id="villagers" required min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">વધારાની માહિતી (વૈકલ્પિક)</label>
+                            <textarea id="additionalInfo" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="જો કોઈ વધારાની માહિતી આપવી હોય તો અહીં લખો..."></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-6">
+                        <button type="submit" id="generateButton"
+                            class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            અહેવાલ જનરેટ કરો
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="loadingIndicator" class="hidden flex justify-center items-center mb-8">
+                <div class="loader"></div>
+                <span class="ml-3 text-gray-700">અહેવાલ જનરેટ થઈ રહ્યો છે...</span>
+            </div>
+
+            <div id="result" class="hidden bg-white rounded-lg shadow-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">જનરેટેડ અહેવાલ</h2>
+                    <button onclick="copyToClipboard()"
+                        class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                        કોપી કરો
+                    </button>
+                </div>
+                <div id="ahevalContent" class="prose max-w-none"></div>
+                <div class="flex justify-center space-x-4 mt-6">
+                    <button onclick="downloadPDF()"
+                        class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                        PDF ડાઉનલોડ કરો
+                    </button>
+                    <button onclick="downloadWord()"
+                        class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                        Word ડાઉનલોડ કરો
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ahevalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                eventName: document.getElementById('eventName').value,
+                dateTime: document.getElementById('dateTime').value,
+                teachers: document.getElementById('teachers').value,
+                boys: document.getElementById('boys').value,
+                girls: document.getElementById('girls').value,
+                smc: document.getElementById('smc').value,
+                villagers: document.getElementById('villagers').value,
+                additionalInfo: document.getElementById('additionalInfo').value
+            };
+
+            // Show loading indicator
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+            document.getElementById('generateButton').disabled = true;
+            document.getElementById('result').classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ formData })
+                });
+
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+
+                const data = await response.json();
+                const aheval = data.candidates[0].content.parts[0].text;
+                
+                // Render markdown content with proper spacing
+                const formattedAheval = aheval
+                    .split('\n\n')  // Split by double newlines to identify paragraphs
+                    .map(paragraph => paragraph.trim())  // Remove extra whitespace
+                    .filter(paragraph => paragraph.length > 0)  // Remove empty paragraphs
+                    .join('\n\n');  // Join back with double newlines
+                
+                document.getElementById('ahevalContent').innerHTML = marked.parse(formattedAheval);
+                document.getElementById('result').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('અહેવાલ જનરેટ કરવામાં એરર આવ્યો છે. કૃપા કરીને ફરીથી પ્રયાસ કરો.');
+            } finally {
+                // Hide loading indicator
+                document.getElementById('loadingIndicator').classList.add('hidden');
+                document.getElementById('generateButton').disabled = false;
+            }
+        });
+
+        function copyToClipboard() {
+            const content = document.getElementById('ahevalContent').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                alert('અહેવાલ કોપી થઈ ગયો છે!');
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('કોપી કરવામાં એરર આવ્યો છે.');
+            });
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('ahevalContent');
+            const opt = {
+                margin: 1,
+                filename: 'aheval.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function downloadWord() {
+            const content = document.getElementById('ahevalContent').innerText;
+            const doc = new docx.Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new docx.Paragraph({
+                            children: [new docx.TextRun(content)]
+                        })
+                    ]
+                }]
+            });
+
+            docx.Packer.toBlob(doc).then(blob => {
+                saveAs(blob, "aheval.docx");
+            });
+        }
+    </script>
+</body>
+</html> 
