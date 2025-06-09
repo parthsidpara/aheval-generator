@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -5,6 +7,16 @@ export default async function handler(req, res) {
 
   try {
     const { formData } = req.body;
+
+    if (!formData) {
+      console.error('No form data provided');
+      return res.status(400).json({ error: 'No form data provided' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY is not set');
+      return res.status(500).json({ error: 'API key not configured' });
+    }
 
     const prompt = `તમારે શ્રી થોરડી પ્રાથમિક શાળામાં થયેલા કાર્યક્રમનો અહેવાલ બનાવવો છે. નીચેની માહિતી આપેલી છે:
     કાર્યક્રમનું નામ: ${formData.eventName}
@@ -18,6 +30,7 @@ export default async function handler(req, res) {
     
     કૃપા કરીને આ માહિતીનો ઉપયોગ કરીને એક પાનાનો અહેવાલ બનાવો.`;
 
+    console.log('Making request to Gemini API...');
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + process.env.GEMINI_API_KEY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -28,10 +41,17 @@ export default async function handler(req, res) {
       })
     });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Gemini API error:', errorData);
+      return res.status(response.status).json({ error: 'Failed to generate content from Gemini API' });
+    }
+
     const data = await response.json();
+    console.log('Successfully received response from Gemini API');
     res.status(200).json(data);
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to generate report' });
+    console.error('Error in generate endpoint:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 } 
